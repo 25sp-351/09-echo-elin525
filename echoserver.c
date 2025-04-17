@@ -20,27 +20,27 @@ void handleConnection(int *sock_fd_ptr){
 
     printf("handling connection on %d\n", sock_fd);
     char buffer[BUFFER_SIZE];
-    ssize_t bytes_received;
+    ssize_t data_received_length;
 
     while(1){
         // receive data from client
-        bytes_received = recv(sock_fd, buffer, sizeof(buffer), 0);
-        if (bytes_received <= 0) {
-            if (bytes_received == 0) {
+        data_received_length = recv(sock_fd, buffer, sizeof(buffer), 0);
+        if (data_received_length <= 0) {
+            if (data_received_length == 0) {
                 printf("client disconnected\n");
             } else {
-                perror("recv failed");
+                perror("receive failed");
             }
             break;
         }
 
         // print received message
         if (verbose) {
-            printf("received: %.*s\n", (int)bytes_received, buffer);
+            printf("receive message: %.*s\n", (int)data_received_length, buffer);
         }
 
         // send data back to client
-        ssize_t bytes_sent = send(sock_fd, buffer, bytes_received, 0);
+        ssize_t bytes_sent = send(sock_fd, buffer, data_received_length, 0);
         if (bytes_sent < 0) {
             perror("send failed");
             break;
@@ -66,8 +66,8 @@ int main(int argc, char* argv[]){
                 verbose = 1;
                 break;
             default:
-                fprintf(stderr, "Usage: %s [-p port] [-v]\n", argv[0]);
-                exit(EXIT_FAILURE);
+                fprintf(stderr, "%s [-p port] [-v]\n", argv[0]);
+                return;
         }
     }
 
